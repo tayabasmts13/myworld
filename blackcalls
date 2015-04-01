@@ -1,0 +1,109 @@
+package com.black;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.RadioButton;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+
+public class BlackcallsActivity extends Activity implements OnClickListener,
+		OnCheckedChangeListener {
+	Intent it;
+	ToggleButton service;
+	Button settings;
+	SharedPreferences mysh;
+	SharedPreferences.Editor edit;
+	RadioButton blist, wlist;
+
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+		mysh = this.getSharedPreferences("details", MODE_PRIVATE);
+		edit = mysh.edit();
+
+		blist = (RadioButton) findViewById(R.id.black);
+		wlist = (RadioButton) findViewById(R.id.white);
+
+		service = (ToggleButton) findViewById(R.id.service);
+		service.setChecked(mysh.getBoolean("service", false));
+
+		settings = (Button) findViewById(R.id.settings);
+		service.setOnClickListener(this);
+		settings.setOnClickListener(this);
+		blist.setChecked(mysh.getBoolean("blist", true));
+		wlist.setChecked(mysh.getBoolean("wlist", false));
+		blist.setOnCheckedChangeListener(this);
+		wlist.setOnCheckedChangeListener(this);
+
+	}
+
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		switch (v.getId()) {
+		case R.id.service:
+			if (service.getText().equals("ACTIVE")) {
+				edit.putBoolean("service", false);
+				Toast.makeText(BlackcallsActivity.this, "DE-ACTIVATED",
+						Toast.LENGTH_SHORT).show();
+			} else {
+				edit.putBoolean("service", true);
+
+				Toast.makeText(BlackcallsActivity.this, "ACTIVATED",
+						Toast.LENGTH_SHORT).show();
+
+			}
+
+			edit.commit();
+			break;
+		case R.id.settings:
+			it = new Intent(BlackcallsActivity.this, Contacts.class);
+
+			startActivity(it);
+			break;
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		// TODO Auto-generated method stub
+
+		switch (buttonView.getId()) {
+		case R.id.black:
+
+			if (isChecked) {
+				Toast.makeText(BlackcallsActivity.this, "black", 5000).show();
+				edit.putBoolean("blist", true);
+				edit.putBoolean("wlist", false);
+
+			}
+
+			break;
+		case R.id.white:
+
+			if (isChecked) {
+				Toast.makeText(BlackcallsActivity.this, "white", 5000).show();
+				edit.putBoolean("blist", false);
+				edit.putBoolean("wlist", true);
+
+			}
+			break;
+
+		default:
+			break;
+
+		}
+		edit.commit();
+	}
+}
